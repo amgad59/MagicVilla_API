@@ -16,50 +16,55 @@ namespace MagicVilla_Web.Services
             villaUrl = configuration.GetValue<string>("ServiceUrls:VillaApi");
         }
 
-        public Task<T> CreateAsync<T>(VillaNumberCreateDTO Entity)
+        public Task<T> CreateAsync<T>(VillaNumberCreateDTO Entity, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 Url = villaUrl + "api/VillaNumberAPI",
                 ApiType = ApiType.POST,
-                data = Entity
+                data = Entity,
+                Token = token
             });
         }
 
-        public Task<T> GetAllAsync<T>()
+        public Task<T> GetAllAsync<T>(string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 Url = villaUrl + "api/VillaNumberAPI",
-                ApiType = ApiType.GET
+                ApiType = ApiType.GET,
+                Token = token
             });
         }
 
-        public Task<T> GetAsync<T>(int id)
+        public Task<T> GetAsync<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 Url = villaUrl + "api/VillaNumberAPI/" + id,
-                ApiType = ApiType.GET
+                ApiType = ApiType.GET,
+                Token = token
             });
         }
 
-        public Task<T> DeleteAsync<T>(int id)
+        public Task<T> DeleteAsync<T>(int id, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 Url = villaUrl + "api/VillaNumberAPI/" + id,
-                ApiType = ApiType.DELETE
+                ApiType = ApiType.DELETE,
+                Token = token
             });
         }
 
-        public Task<T> UpdateAsync<T>(VillaNumberUpdateDTO Entity)
+        public Task<T> UpdateAsync<T>(VillaNumberUpdateDTO Entity, string token)
         {
             return SendAsync<T>(new APIRequest()
             {
                 Url = villaUrl + "api/VillaNumberAPI/" + Entity.VillaNo,
                 ApiType = ApiType.PUT,
-                data = Entity
+                data = Entity,
+                Token = token
             });
         }
     }

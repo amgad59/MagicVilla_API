@@ -2,8 +2,10 @@
 using MagicVilla_VillaAPI.Models;
 using MagicVilla_VillaAPI.Models.DTO;
 using MagicVilla_VillaAPI.Repository.IRepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using System.Data;
 using System.Net;
 
 namespace MagicVilla_VillaAPI.Controllers
@@ -72,6 +74,7 @@ namespace MagicVilla_VillaAPI.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -109,6 +112,7 @@ namespace MagicVilla_VillaAPI.Controllers
         }
 
 
+        [Authorize(Roles = "admin")]
         [HttpDelete("{id:int}", Name = "DeleteVillaNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -133,6 +137,7 @@ namespace MagicVilla_VillaAPI.Controllers
             return _response;
         }
 
+        [Authorize(Roles = "admin")]
         [HttpPut("{id:int}", Name = "UpdateVillaNumber")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -143,11 +148,22 @@ namespace MagicVilla_VillaAPI.Controllers
             {
                 if (villa == null || id != villa.VillaNo) return BadRequest();
 
-                VillaNumber model = _mapper.Map<VillaNumber>(villa);
+                if (await _dbVillas.Get(u => u.Id == id) == null)
+                {
+                    ModelState.AddModelError("ErrorMessages", "VillaID is invalid");
+                    return BadRequest(ModelState);
+                }
+				if (await _dbVillas.Get(u => u.Id == villa.VillaID) != null)
+				{
+					ModelState.AddModelError("ErrorMessages", "Villa doesn't exist");
+					return BadRequest(ModelState);
+				}
+				VillaNumber model = _mapper.Map<VillaNumber>(villa);
 
                 await _dbVillaNumbers.Update(model);
 
                 _response.StatusCode = HttpStatusCode.OK;
+                _response.isSuccess = true;
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -159,6 +175,7 @@ namespace MagicVilla_VillaAPI.Controllers
         }
 
 
+        [Authorize(Roles = "admin")]
         [HttpPatch("{id:int}", Name = "UpdatePartialVillaNumber")]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
