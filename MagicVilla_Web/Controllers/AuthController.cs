@@ -66,7 +66,7 @@ namespace MagicVilla_Web.Controllers
 			APIResponse result = await _authService.RegisterAsync<APIResponse>(obj);
 			if(result.isSuccess && result != null)
 			{
-				RedirectToAction(nameof(Login));
+				return RedirectToAction(nameof(Login));
 			}
 			return View(obj);
 		}
