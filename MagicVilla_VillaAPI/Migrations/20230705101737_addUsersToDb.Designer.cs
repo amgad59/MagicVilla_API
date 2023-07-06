@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MagicVilla_VillaAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230705101737_addUsersToDb")]
-    partial class addUsersToDb
+    [Migration("20230705101737_addlocalUsersToDb")]
+    partial class addlocalUsersToDb
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -47,7 +47,7 @@ namespace MagicVilla_VillaAPI.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("localUsers");
                 });
 
             modelBuilder.Entity("MagicVilla_VillaAPI.Models.Villa", b =>

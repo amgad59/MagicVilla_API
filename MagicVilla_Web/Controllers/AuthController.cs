@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using Utilities;
 
@@ -35,9 +36,12 @@ namespace MagicVilla_Web.Controllers
 				LoginResponseDTO model = JsonConvert.DeserializeObject<LoginResponseDTO>(Convert.ToString(ApiResponse.Result));
 				HttpContext.Session.SetString(SD.SessionToken, model.Token);
 
+				var handler = new JwtSecurityTokenHandler();
+				var jwt = handler.ReadJwtToken(model.Token);
+
 				ClaimsIdentity claimsIdentity = new ClaimsIdentity(CookieAuthenticationDefaults.AuthenticationScheme);
-				claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, model.User.UserName));
-				claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, model.User.Role));
+				claimsIdentity.AddClaim(new Claim(ClaimTypes.Name, jwt.Claims.FirstOrDefault(u => u.Type == "unique_name").Value));
+				claimsIdentity.AddClaim(new Claim(ClaimTypes.Role, jwt.Claims.FirstOrDefault(u=>u.Type == "role").Value));
 
 				ClaimsPrincipal claimsPrincipal = new ClaimsPrincipal(claimsIdentity);
 				await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme,claimsPrincipal);
@@ -60,11 +64,11 @@ namespace MagicVilla_Web.Controllers
 		public async Task<IActionResult> Register(RegistrationRequestDTO obj)
 		{
 			APIResponse result = await _authService.RegisterAsync<APIResponse>(obj);
-			if(result.isSuccess&& result != null)
+			if(result.isSuccess && result != null)
 			{
 				RedirectToAction(nameof(Login));
 			}
-			return View(result);
+			return View(obj);
 		}
 		public async Task<IActionResult> Logout()
 		{

@@ -7,8 +7,11 @@ using System.Net;
 namespace MagicVilla_VillaAPI.Controllers
 {
 	[ApiController]
-	[Route("api/UserAuthentication")]
-	public class UserAPIController : Controller
+	[Route("api/v{version:apiVersion}/UserAuthentication")]
+    [ApiVersion("1.0")]
+	[ApiVersionNeutral]
+
+    public class UserAPIController : Controller
 	{
 		private readonly IUserRepository _userRepository;
 		protected APIResponse _response;
@@ -46,7 +49,7 @@ namespace MagicVilla_VillaAPI.Controllers
 				_response.isSuccess = false;
 				return BadRequest(_response);
 			}
-			LocalUser user = await _userRepository.RegisterUser(model);
+			UserDTO user = await _userRepository.RegisterUser(model);
 			if (user == null)
 			{
 				_response.ErrorMessages.Add("error registering ");

@@ -8,10 +8,11 @@ using Microsoft.AspNetCore.Mvc;
 using System.Data;
 using System.Net;
 
-namespace MagicVilla_VillaAPI.Controllers
+namespace MagicVilla_VillaAPI.Controllers.v1
 {
     [ApiController]
-    [Route("api/VillaNumberAPI")]
+    [Route("api/v{version:apiVersion}/VillaNumberAPI")]
+    [ApiVersion("1.0")]
     public class VillaNumberAPIController : Controller
     {
         private readonly IVillaNumberRepository _dbVillaNumbers;
@@ -26,6 +27,14 @@ namespace MagicVilla_VillaAPI.Controllers
             _mapper = mapper;
         }
 
+        [HttpGet("GetString")]
+        public IEnumerable<string> Get()
+        {
+            return new string[]
+            {
+                "string1","string2"
+            };
+        }
 
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
